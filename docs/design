@@ -1,0 +1,869 @@
+[TOC]
+
+# 机器人的设计思路
+
+在拿到题目时，看到是关于小球收集的小车，于是有了以下第一套初始方案：
+
+1、将底盘设计为双层，通过长钉与螺帽固定连接形成小车初始整体支架。
+
+2、对于驱动系统，采用tt马达带动麦克纳姆轮，通过速度调控使每个轮子达到不同速度从而实现前进，转向等不同移动功能。
+
+3、对于小车实现摄取、携带等高级功能的问题，初步设计了一种机械臂与铲斗结合的采集方式需要3个舵机实现。
+
+而在仔细思考后，加上电控难度过大等实际问题困扰于是对高级功能迭代出以下两种方案：
+
+## 方案一
+
+以网球收集器作为灵感来源对高级功能作出改动
+
+1、将底盘设计为双层，通过长钉与螺帽固定连接形成小车初始整体支架。（同初始方案）
+
+2、对于驱动系统，采用tt马达带动麦克纳姆轮，通过速度调控使每个轮子达到不同速度从而实现前进，转向等不同移动功能。（同初始方案）
+
+ 3、对于高效收集小球问题，采用圆柱形笼式容器（见下图），实现所及之处小球自动嵌入并完成携带，两侧采用抓臂实现固定（见下图）。
+
+![image-20251026145153660](design thought.assets/image-20251026145153660.png)
+
+![image-20251026145226835](design thought.assets/image-20251026145226835.png)
+
+## 方案二
+
+同样是对高级功能作出改动，此方案则是基于扫地机器人原理获得灵感。
+
+1、将底盘设计为双层，通过长钉与螺帽固定连接形成小车初始整体支架。（同初始方案）
+
+2、对于驱动系统，采用tt马达带动麦克纳姆轮，通过速度调控使每个轮子达到不同速度从而实现前进，转向等不同移动功能。（同初始方案）
+
+ 3、将原本机械臂删除设计成固定的四分之三封闭且中空圆柱体，在中间插入电机带动辐条转动从而达到收集小球的目的（见下图）。
+
+![image-20251026145312217](design thought.assets/image-20251026145312217.png)
+
+
+
+  [TOC]
+
+# 理论知识
+
+## C语言
+
+### 第一个C语言程序
+
+— vs2022的一些最最基础的功能和用法
+1 在空白项目里面新建一个 c或c嘎嘎的文件
+方法：找到解决方案资源管理器 若找不到则在视图里找 对相应的文件右键 在添加选项里找的新建项 选择c或者cpp
+2 找到代码里面的语法错误
+方法：在生成里面找到 生成解决方案或者重新生成解决方案 会报出错误位置以及改错方法 直接双击错误
+找到错误位置并改正
+3 运行代码
+方法：在调试里面找到开始执行的选项
+语法错误是根本无法运行 逻辑错误能运行但是结果离谱
+代码写在main里面
+
+### C语言中的关键字和标识符
+
+![image-20251026102727576](E:\Typora\Theoretical knowledge.assets\image-20251026102727576.png)
+
+告诉计算机要操作的数据，控制源代码运行，可能与命令类似
+
+![image-20251026102908646](E:\Typora\Theoretical knowledge.assets\image-20251026102908646.png)
+
+标识符：某个实体的名字
+
+命名规则与规范:
+
+1.只能由字母 数字 下划线_组成
+2 .数字不能作为首字母
+3 .不能和关键字相同
+4 .有长度限制
+5 .区分大小写
+6 .合理冠名
+
+### C语言的基本数据类型
+
+![image-20251026103149090](E:\Typora\Theoretical knowledge.assets\image-20251026103149090.png)
+
+在c语言中 不仅关心数值的大小 还关心所占内存的多少
+sizeof（）是求括号里内容占内存的多少 %d表示输出为整型 %c表示输出为一个字符
+字符是通过ascii码和整型对应 所以在一定情况下 字符能被当成整型使用
+
+### 常量与变量
+
+常量：不能被修改的数据
+
+变量：可以被修改的
+
+常量给变量赋值
+
+![image-20251026103328765](E:\Typora\Theoretical knowledge.assets\image-20251026103328765.png)
+
+变量
+首先变量需要定义才能够使用
+定义方法 数据类型（基本数据类型）标识符= ；
+printf（） 控制台输出函数 在圆括号内给出格式化字符串 具体详见project2
+unsigned使变量无符号位 就是没办法识别成负数
+常变量 通过const修饰来定义      const 数据类型（基本数据类型）标识符=；
+常变量只能初始化赋值 后期无法重复赋值
+
+### 运算符
+
+![image-20251026104158301](E:\Typora\Theoretical knowledge.assets\image-20251026104158301.png)
+
+![image-20251026104309728](E:\Typora\Theoretical knowledge.assets\image-20251026104309728.png)![image-20251026104340017](E:\Typora\Theoretical knowledge.assets\image-20251026104340017.png)在自加运算中有++age age++两种写法 在分![image-20251026104357209](E:\Typora\Theoretical knowledge.assets\image-20251026104357209.png)![image-20251026104415020](E:\Typora\Theoretical knowledge.assets\image-20251026104415020.png)![image-20251026104434871](E:\Typora\Theoretical knowledge.assets\image-20251026104434871.png)行写的时候无影响 而在写连式时有影响 先++是先加再赋值
+后++反之 自减与自加相同
+对于数学上的取值范围 必须通过逻辑运算来实现
+计算机默认表示真假操作 非0为真 0为假
+位左移相当于乘2的n次幂 位右移相当于整除2的n次幂
+
+### 表达式和语句的基本概念
+
+表达式
+定义：表达式是通过运算符联系标量和常量的语法结构
+注意：1.表达式的操作数据类型必须保持一致 当数据操作类型不一致时会发生类型转换
+类型转换分为两种：（1）自动转换:小类型转换为大类型
+（2）强制转换：大类型转化为小类型 （类型名称）这种就是类型转化的写法
+在一些情况 强制转化会造成数据丢失
+判断类型转化的依据 1.通过内存大小来判断 2.通过取值范围的大小来判断
+如 int 和float 均为4字节的存储大小 但是float的取值范围更大
+语句
+语句定义：一行行代码 通过；来结尾（丐版定义）
+一条条指令，计算机通过执行语句来实现程序运行
+语句分类
+
+![image-20251026105040317](E:\Typora\Theoretical knowledge.assets\image-20251026105040317.png)
+
+scanf 格式化输入函数
+使用方式 scanf（"", &""）；""内输入格式化字符串 ""表示输入的对象
+注意：1.在要输入的变量前加&
+2.输入多个数据 本身自身就自带结束符 所以在""内尽量不要有别的字符 结束符默认为空格和回车
+可能会导致结束符改变
+
+### if语句
+
+if语句是选择语句的一种
+if（）圆括号里面一般跟逻辑表达式和关系表达式 少数情况跟算数表达式 算数表达式中 0为假 非0即为真
+if后可跟简单语句或者复合语句 复合语句要用花括号括起来 （花括号可以保证逻辑严密更清晰）
+if else 如果 否则
+注意：1.else不能够独立存在
+2.else和if使用方法类似
+if else if 多分支执行
+用if else的嵌套也可以实现 嵌套就是花括号里面再嵌套语句
+
+### switch语句
+
+switch case语句
+语法结构 switch（算术表达式或者单个变量）
+{case1:
+              break
+case2:
+              break
+case3:
+              break
+default:
+              break
+}
+执行流程：switch语句适合于精确的值的表达式和变量 根据圆括号里面的内容 定位到满足条件的case中
+进入程序执行 case相当于入口 break相当于休止 即为遇到break程序才会停止 如果变量不满足所有case
+的情况 则会执行default
+可以用运算操作来提取变量共性 把范围值转化为数值进而采用switch语句
+可以用多个case就是多个入口来进入程序编写
+
+### 循环语句
+
+![image-20251026105546831](E:\Typora\Theoretical knowledge.assets\image-20251026105546831.png)
+
+for语句
+语法结构 for（指定操作的变量 计数变量；判断循环是非进行的条件；对变量执行的操作）
+{
+循环体
+}
+执行流程：表达式1-》表达式2-》循环体-》表达式3-》表达式2-》循环体……如此反复
+当表达式2里面的是真时 则继续进行 假则结束
+其中表达式1和3如果是空语句的话则表示啥也不做
+表达式2是空的话则是无线循环
+while语句
+语法结构：提前定义好计数器
+while（逻辑或关系表达式）
+{
+循环体 需要在循环体内部做好计数器的修改
+}
+do while 语句
+语法结构 do
+{循环体
+}
+while（关系或逻辑表达式）；
+while和do while 的执行方式和for语句相似
+while和for语句while或者for后面不加；
+do while 需要加上；
+while for都是先判断后执行 而do while则是先执行后判断 所以在一些情况下 同样条件 do while会比for多进行一次
+
+### 跳转语句及嵌套语句
+
+跳转
+1.break（跳出）
+break可用作于switch case语句的结束 也可以用于for等循环语句的结束 但是它仅是跳出且终止一重循环
+用法就是在语句后跟上break；就相当于用上break 就不再进行循环了
+2.continue（跳转）
+跳转语句只用于循环中 结束当前循环直接进行下一循环 但是在for中是回到表达式3再回到循环处
+用上continue是把当前此的循环跳过开启下一循环
+用法continue；
+3.goto（无条件转移）
+MYLAB：是标号 用冒号来修饰 搭配goto如同飞雷神 跳到标号的位置 从上往下运行
+goto可以跳出多重循环（建议）
+不过慎用 否则容易导致代码混乱
+控制语句嵌套
+把控制语句当成一个普通语句 一层一层的进行执行
+通过break来跳出嵌套语句 可通过定义中间变量再加上if条件执行加上break来跳出
+
+### 数组
+
+定义：固定大小（指的是内存大小）的相同类型元素的顺序集合
+一维数组（n个相同类型的数据集合）
+定义方式：数据类型 加表示符加[]括号内就是该数组的个数n []这个括号内必须是常量或者常量表达式
+注意：[0]这里代表的是数组的第一个数据 每一个1实际上是内存大小 如一个int类型 4字节 0到1实际上是跳了4个字节 一种单位类型的1
+下标访问 通过[]里的数字来访问数组里面的数据
+初始化
+在c语言中初始化是必要的 否则会导致无法运行 是内存存储相关问题导致的
+数组的初始化方式
+1.所有元素赋值{1，2，3，}类似如此
+2.给出部分元素的值 其余用0来填补
+3.给出所有值 可以省略最高维
+二维数组
+可以看成n个相同的一维数组的集合arr[][]
+定义方式：与一维数组类似
+赋值
+1.全部赋值{{} {} {}}
+2.给部分数组初始化赋值 未赋值的用0补 因为二维和一维的储存方式类似 所以赋值也类似
+3.给出所有元素 可以省略最高维度
+访问
+用双循环访问或者整除取余的方式找到规律来对应地下标访问
+字符数组
+赋值初始化的方法和二维一维数组的方式不同
+单个字符可用{‘ ’ ‘ ’ ‘ ’ ‘ ’}来赋值
+字符串可用“”来赋值 字符串用0来表示终结 因此数组的元素数要比赋值的元素数大一
+sizeof用来求数组的内存大小 strlen用来求字符数组的长度
+
+### 函数
+
+函数是一个实现特定功能的代码块，相同的代码可以封装成函数，写框架填值
+
+![image-20251026110020716](E:\Typora\Theoretical knowledge.assets\image-20251026110020716.png)
+
+函数返回值类型：
+void表示空类型，即不返回结果；如果需要返回结果，需要在函数体末尾加上return和表达式返回。
+
+函数定义：
+格式：函数返回值类型 函数名（形参1类型，形参2类型，……）
+{函数体
+};
+
+调用格式：函数名（实参）；
+
+调用条件：1.函数调用前需要提前声明或定义
+2.如果是库函数就需要头文件<stdio.h>（标准输入输出）
+3.自定义函数需要声明或定义
+
+### cpp区别于的一些用法
+
+![image-20251026110228593](E:\Typora\Theoretical knowledge.assets\image-20251026110228593.png)
+
+## GPIO
+
+![image-20251026110729874](E:\Typora\Theoretical knowledge.assets\image-20251026110729874.png)
+
+GPIO八大模式；
+
+1.推挽输出：P-MOS激活，N-MOS关闭，3.3v高电平。（由芯片电压所驱动）
+2.开漏输出：N-MOS工作，P-MOS一直断开，N-MOS工作，GND变为5V，。（没有驱动能力，靠外部电压源进行驱动，所以很灵活）
+
+![image-20251026110754456](E:\Typora\Theoretical knowledge.assets\image-20251026110754456.png)
+
+片上外设/输出寄存器  根据控制来源的不同分为普通和复用
+
+3.复用推挽输出
+
+4.复用开漏输出
+
+5.浮空输入模式：GPIO口内部处于高阻态，引脚电平=3.3v，高电平。
+
+上拉电阻：限流，防止电源与GND直接相连而短路。
+
+ 6.上拉输入
+
+7.下拉输入
+
+8.模拟输入 
+
+## 中断与串口
+
+中断
+
+- 概念：中断是指计算机在执行期间，系统内发生任何非寻常的或非预期的急需处理事件，使得CPU暂时中断当前正在执行的程序而转去执行相应的事件处理程序，待处理完毕后又返回原来被中断处继续执行。
+- 优先级：STM32的中断优先级由NVIC（嵌套向量中断控制器）管理，中断优先级寄存器NVIC_IPR的高4位被分成抢占优先级和子优先级两组。多个中断同时提出申请时，先比较抢占优先级，高的先执行；若相同，则比较子优先级；若都相同，比较中断编号，编号越小，优先级越高。
+- 中断处理过程：包括按键硬件连接、GPIO配置、外部中断配置以及中断服务程序编写等步骤。
+
+串口
+
+- 硬件连接：STM32的串口通过UART模块实现，需连接TX、RX引脚到对应设备的RX、TX引脚，还可连接GND以保证通信稳定性。
+- 参数配置：要为串口模块使能时钟，配置波特率、工作模式（如8数据位、1停止位、无奇偶校验位）等参数。
+- 中断使能：串口通信可通过中断方式处理，需使能接收中断和（或）发送中断，当接收到数据时，CPU会暂停当前任务，转而执行串口中断服务程序。
+- 数据收发：发送数据时将数据写入串口数据寄存器，接收数据时从串口数据寄存器中读取数据，通常还涉及缓存区的管理。
+
+## PWM
+
+   1.PWM核心概念与原理
+
+- 定义：脉冲宽度调制（PWM）是一种通过周期性改变脉冲信号的高电平时间（占空比），来模拟模拟信号输出或实现功率调节的技术。
+- 关键参数：
+- 周期（T）：脉冲信号重复一次的时间，由定时器的计数周期决定。
+- 占空比（D）：高电平时间占整个周期的比例（0%~100%），是PWM控制的核心（如占空比50%表示高低电平各占一半时间）。
+- 频率（f）：周期的倒数（f=1/T），需根据被控设备特性匹配（如舵机常用50Hz，电机常用1kHz~20kHz）。
+- STM32实现逻辑：通过定时器的PWM模式，将计数器值与比较值（CCR）比较，计数器小于CCR时输出高电平，大于等于时输出低电平，通过修改CCR值改变占空比。
+
+2. STM32 PWM配置核心步骤（以HAL库为例）
+
+1. 时钟使能：开启对应定时器（如TIM2/TIM3）和GPIO引脚的时钟，确保硬件模块供电。
+2. GPIO配置：将PWM输出引脚（如PA0对应TIM2_CH1）配置为“复用推挽输出”模式，绑定定时器的复用功能。
+3. 定时器基础配置：
+- 选择计数模式（常用向上计数：从0计数到自动重装载值ARR后清零）。
+- 设置ARR值（决定周期：ARR越大，周期越长，频率越低）和PSC预分频系数（降低时钟频率，细化周期调节）。
+4. PWM模式配置：
+- 选择PWM模式1（计数器<CCR时高电平）或模式2（计数器<CCR时低电平）。
+- 配置比较值CCR（初始占空比对应的数值，如ARR=1000时，CCR=500对应50%占空比）。
+5. 使能输出与启动定时器：使能定时器的PWM输出通道，启动定时器计数，PWM信号开始输出。
+
+3. 实战应用场景与技巧
+
+- 电机调速：通过改变PWM占空比调节电机两端的平均电压，占空比越高，电机转速越快（如直流电机PWM调速电路中，配合MOS管或L298N驱动模块实现）。
+- 舵机角度控制：50Hz频率下，通过1ms~2ms的高电平脉冲对应舵机0°~180°转动（如CCR值对应脉冲宽度，需精确计算ARR和PSC以匹配50Hz周期）。
+- 呼吸灯实现：在主循环或定时器中断中，周期性递增/递减CCR值，使LED的亮度随占空比变化呈现呼吸效果。
+- 常见问题解决：
+- 输出无波形：检查GPIO复用功能是否正确、定时器时钟是否使能、PWM通道是否开启。
+- 占空比调节不连续：增大ARR值（如从100改为1000），提升占空比调节精度。
+
+  [TOC]
+
+# 机器人
+
+## 麦轮
+
+学习用CubeMX创建一个新工程，选择你的芯片型号（如STM32F103C8T6）。
+
+学习配置一个GPIO引脚为输出模式，控制一个LED灯的闪烁。
+
+生成代码，用Keil打开，找到主循环，编写代码让LED闪烁。
+
+使用ST-Link将程序下载到开发板，看到LED闪烁成功。
+
+***\*PWM控制电机转速的代码\****
+
+// 在main.c中
+
+\#include "stm32f1xx_hal.h"
+
+TIM_HandleTypeDef htim3; // PWM定时器
+
+int main(void) {
+
+  HAL_Init();
+
+  SystemClock_Config();
+
+  MX_TIM3_Init(); // PWM初始化（CubeMX生成）
+
+  
+
+  // 启动PWM（50%占空比）
+
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 500); // 假设ARR=1000
+
+ 
+
+  while (1) {
+
+​    // 修改占空比控制转速
+
+​    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 700); // 加速
+
+​    HAL_Delay(1000);
+
+  }
+
+}
+
+ 
+
+***\*编译器读取转速的代码\****
+
+// 在main.c中
+
+TIM_HandleTypeDef htim2; // 编码器定时器
+
+ 
+
+int32_t encoder_prev = 0;
+
+float rpm = 0;
+
+ 
+
+void Read_Encoder() {
+
+  int32_t encoder_now = __HAL_TIM_GET_COUNTER(&htim2);
+
+  int32_t delta = encoder_now - encoder_prev;
+
+  encoder_prev = encoder_now;
+
+  
+
+  // 计算转速（假设编码器1000线，采样周期10ms）
+
+  rpm = (delta * 60.0f) / (1000 * 0.01f); // RPM = (脉冲数/每转脉冲数) / 时间(分钟)
+
+}
+
+ 
+
+ 
+
+***\*麦轮运动学原理\****
+
+ 
+
+麦轮的核心是矢量合成。一个麦轮底盘通常由四个电机驱动，每个麦轮由两个分力合成运动。
+
+前进/后退： 四个轮子的主辊方向同时向前或向后。
+
+平移（左右滑移）： 左右两侧轮子的主辊方向相反，合成出向左或向右的力。
+
+旋转（自转）： 对角线上的轮子方向相同，同一侧的轮子方向相反，合成出旋转的力矩。
+
+ 
+
+ 
+
+***\*建立运动学模型\****
+
+ 
+
+在代码中定义一个结构体来存储底盘的目标速度，通常包括三个分量：
+
+ 
+
+ Vx ：X方向（前后）速度
+
+ Vy ：Y方向（左右）速度
+
+ Vw ：旋转角速度
+
+ 
+
+***\*编写一个运动解算函数\****，例如  Mecanum_Calculate(int16_t Vx, int16_t Vy, int16_t Vw) 。
+
+在这个函数内部，根据麦轮运动学公式，将  Vx, Vy, Vw 分解为四个电机各自的目标转速（M1, M2, M3, M4）。
+
+ 
+
+// 在mecanum.h中
+
+typedef struct {
+
+  float Vx;  // 前后速度（mm/s）
+
+  float Vy;  // 左右速度（mm/s）
+
+  float Vw;  // 旋转角速度（rad/s）
+
+} Chassis_Speed;
+
+ 
+
+// 在mecanum.c中
+
+void Mecanum_Calculate(Chassis_Speed speed, float* wheel_rpm) {
+
+  // 参数：轮距(mm)和麦轮角度(通常45度)
+
+  const float L = 150.0f; // 轮距
+
+  const float R = 45.0f;  // 轮半径(mm)
+
+  
+
+  // 四个电机的转速计算（运动学公式）
+
+  wheel_rpm[0] = (speed.Vx - speed.Vy - L * speed.Vw) / R; // 右前
+
+  wheel_rpm[1] = (speed.Vx + speed.Vy + L * speed.Vw) / R; // 左前
+
+  wheel_rpm[2] = (speed.Vx + speed.Vy - L * speed.Vw) / R; // 左后
+
+  wheel_rpm[3] = (speed.Vx - speed.Vy + L * speed.Vw) / R; // 右后
+
+}
+
+ 
+
+ 
+
+ 
+
+ 
+
+了解到后续的操作过程中需要为每个电机编写一个PID控制器。
+
+PID的作用： 比较电机的目标转速（来自运动解算）和编码器反馈的实际转速，计算出需要调整的PWM值，使实际转速紧紧跟随目标转速。
+
+调试顺序：
+
+先调单个电机的PID：让一个电机能快速、平稳、无超调地达到目标转速。这是最花时间但最重要的一步。
+
+再同时控制四个电机：调用四次PID计算，分别更新四个电机的PWM。
+
+ 
+
+ 
+
+编写上层代码，给底盘发送指令，例如：
+
+ Mecanum_Calculate(100, 0, 0) // 向前走
+
+ Mecanum_Calculate(0, 100, 0) // 向右平移
+
+ Mecanum_Calculate(0, 0, 100) // 顺时针旋转
+
+ 
+
+ 
+
+推荐使用的模板
+
+├── Core/
+
+│  ├── Src/
+
+│  │  ├── main.c      # 主循环与初始化
+
+│  │  ├── pid.c      # PID算法
+
+│  │  └── mecanum.c    # 运动学解算
+
+│  └── Inc/
+
+│    ├── pid.h
+
+│    └── mecanum.h
+
+├── Drivers/         # CubeMX生成的HAL库
+
+└── STM32CubeMX/       # CubeMX工程文件
+
+
+
+![image-20251026152950166](robot.assets/image-20251026152950166.png)
+
+![image-20251026153025537](robot.assets/image-20251026153025537.png)
+
+![image-20251026153041585](robot.assets/image-20251026153041585.png)
+
+![image-20251026153059387](robot.assets/image-20251026153059387.png)
+
+![image-20251026153155849](robot.assets/image-20251026153155849.png)![image-20251026153210000](robot.assets/image-20251026153210000.png)
+
+代码：
+
+void chassis_velocity_resolve(float vx, float vy, float vw) {
+    static float wheel_rpm[4];
+    static float rotate_ratio_f, rotate_ratio_b, wheel_rpm_ratio;
+    
+    // 根据参数计算转换系数
+    rotate_ratio_f = ((WHEELBASE + WHEELTRACK) / 2.0f - GIMBAL_OFFSET) / RADIAN_COEF;
+    rotate_ratio_b = rotate_ratio_f;
+    wheel_rpm_ratio = 60.0f / (PERIMETER * CHASSIS_DECELE_RATIO);
+    
+    // 计算各轮转速（RPM）
+    wheel_rpm[0] = (vx - vy + vw * rotate_ratio_f) * wheel_rpm_ratio;  // 左前轮
+    wheel_rpm[1] = (vx + vy + vw * rotate_ratio_f) * wheel_rpm_ratio;  // 右前轮
+    wheel_rpm[2] = (-vx + vy + vw * rotate_ratio_b) * wheel_rpm_ratio; // 左后轮
+    wheel_rpm[3] = (-vx - vy + vw * rotate_ratio_b) * wheel_rpm_ratio; // 右后轮
+    
+    // 控制电机
+    motor_control(wheel_rpm);
+}
+
+/**
+  * @brief  TT马达PWM控制（使用L298N）
+  * @param  wheel_rpm: 四个轮子的转速数组
+  * @retval 无
+    */
+    void motor_control(float* wheel_rpm) {
+    int pwm_values[4];
+    float max_rpm = 200.0; // TT马达最大转速估计值
+    
+    // 将转速转换为PWM值（0-1000）
+    for(int i = 0; i < 4; i++) {
+        // 限制转速范围
+        if(wheel_rpm[i] > max_rpm) wheel_rpm[i] = max_rpm;
+        if(wheel_rpm[i] < -max_rpm) wheel_rpm[i] = -max_rpm;
+        
+        // 转换为PWM值（假设PWM范围0-1000）
+        pwm_values[i] = (int)(wheel_rpm[i] / max_rpm * 500);
+        
+        // 处理电机方向
+        if(pwm_values[i] >= 0) {
+            motor_pwm_set(i, pwm_values[i], 0); // 正转
+        } else {
+            motor_pwm_set(i, 0, -pwm_values[i]); // 反转
+        }
+    }
+    }
+
+/**
+  * @brief  L298N PWM控制函数
+  * @param  motor_id: 电机编号(0-3)
+  * @param  pwm_forward: 正转PWM值
+  * @param  pwm_backward: 反转PWM值
+  * @retval 无
+    */
+    void motor_pwm_set(int motor_id, int pwm_forward, int pwm_backward) {
+    switch(motor_id) {
+        case 0: // 电机1 (左前)
+            PWM_Set(0, pwm_forward);
+            PWM_Set(1, pwm_backward);
+            break;
+        case 1: // 电机2 (右前)
+            PWM_Set(2, pwm_forward);
+            PWM_Set(3, pwm_backward);
+            break;
+        case 2: // 电机3 (左后)
+            PWM_Set(4, pwm_forward);
+            PWM_Set(5, pwm_backward);
+            break;
+        case 3: // 电机4 (右后)
+            PWM_Set(6, pwm_forward);
+            PWM_Set(7, pwm_backward);
+            break;
+    }
+    }
+
+
+
+## PS2
+
+步骤：创建工程并选择MCU型号→配置引脚→生成代码→编写代码解析数据
+
+#include "ax_ps2.h"
+#include "main.h"
+
+// PS2???????????
+#define DI_PORT     GPIOA
+#define DI_PIN      GPIO_PIN_4
+
+#define CMD_PORT    GPIOA
+#define CMD_PIN     GPIO_PIN_5
+
+#define CS_PORT     GPIOA
+#define CS_PIN      GPIO_PIN_6
+
+#define CLK_PORT    GPIOA
+#define CLK_PIN     GPIO_PIN_7
+
+// ?????IO??
+#define DI()        HAL_GPIO_ReadPin(DI_PORT, DI_PIN)
+#define CMD_H()     HAL_GPIO_WritePin(CMD_PORT, CMD_PIN, GPIO_PIN_SET)
+#define CMD_L()     HAL_GPIO_WritePin(CMD_PORT, CMD_PIN, GPIO_PIN_RESET)
+#define CS_H()      HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET)
+#define CS_L()      HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET)
+#define CLK_H()     HAL_GPIO_WritePin(CLK_PORT, CLK_PIN, GPIO_PIN_SET)
+#define CLK_L()     HAL_GPIO_WritePin(CLK_PORT, CLK_PIN, GPIO_PIN_RESET)
+
+const uint8_t PS2_cmnd[9] = {0x01, 0x42, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // ????????
+static uint8_t PS2_data[9] = {0};  // ?????
+
+/**
+  * @brief  PS2???
+  * @param  ?
+  * @retval ?
+    */
+    void AX_PS2_Init(void)
+    {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    // ??GPIO??
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    // DATA???? - ????
+    GPIO_InitStruct.Pin = DI_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(DI_PORT, &GPIO_InitStruct);
+
+    // COMMAND???? - ????
+    GPIO_InitStruct.Pin = CMD_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(CMD_PORT, &GPIO_InitStruct);
+
+    // CS???? - ????
+    GPIO_InitStruct.Pin = CS_PIN;
+    HAL_GPIO_Init(CS_PORT, &GPIO_InitStruct);
+
+    // CLK???? - ????
+    GPIO_InitStruct.Pin = CLK_PIN;
+    HAL_GPIO_Init(CLK_PORT, &GPIO_InitStruct);
+
+    // ??PS2????
+    CS_H();
+    }
+
+/**
+  * @brief  PS2??????
+  * @param  cmd: ??????
+  * @retval ?????
+    */
+    static uint8_t PS2_ReadWriteData(uint8_t cmd)
+    {
+    uint8_t res = 0;
+    uint8_t ref;
+
+    // ????,?????1????
+    for(ref = 0x01; ref > 0x00; ref <<= 1)
+    {
+        // ??????
+        if(ref & cmd)
+            CMD_H();
+        else
+            CMD_L();
+
+        CLK_L();
+    //        HAL_Delay(1); // ????????????????,???????????
+        delay_us(16);
+
+        // ??????
+        if(DI())
+            res |= ref;
+        
+        CLK_H();
+    //        HAL_Delay(1); // ????????????????,???????????
+        delay_us(16);
+    }
+
+    return res;
+    }
+
+/**
+  * @brief  PS2?????????
+  * @param  *JoystickStruct ???????
+  * @retval ?
+    */
+    void AX_PS2_ScanKey(JOYSTICK_TypeDef *JoystickStruct)
+    {
+    uint8_t i;
+
+    // ????
+    CS_L();
+
+    // ??PS2??
+    for(i = 0; i < 9; i++)
+    {
+        PS2_data[i] = PS2_ReadWriteData(PS2_cmnd[i]);
+    }
+
+    // ????
+    CS_H();
+
+    // ????
+    JoystickStruct->mode = PS2_data[1];
+    JoystickStruct->btn1 = ~PS2_data[3];
+    JoystickStruct->btn2 = ~PS2_data[4];
+    JoystickStruct->RJoy_LR = PS2_data[5];
+    JoystickStruct->RJoy_UD = PS2_data[6];
+    JoystickStruct->LJoy_LR = PS2_data[7];
+    JoystickStruct->LJoy_UD = PS2_data[8];
+    }
+
+/**
+  * @brief  ??????????
+  * @uint32_t  udelay: ???????
+  * @retval ?
+    */
+
+void delay_us(uint32_t udelay)    //??hal?us???
+{
+  uint32_t startval,tickn,delays,wait;
+
+  startval = SysTick->VAL;
+  tickn = HAL_GetTick();
+  //sysc = 72000;  //SystemCoreClock / (1000U / uwTickFreq);
+  delays =udelay * 72; //sysc / 1000 * udelay;
+  if(delays > startval)
+    {
+      while(HAL_GetTick() == tickn)
+        {
+
+        }
+      wait = 72000000 + startval - delays;
+      while(wait < SysTick->VAL)
+        {
+    
+        }
+    }
+  else
+    {
+      wait = startval - delays;
+      while(wait < SysTick->VAL && HAL_GetTick() == tickn)
+        {
+
+        }
+    }
+}
+
+问题：配置好ps2后操作摇杆无反应
+
+解决：可能是受其他干扰源影响，属于是信号干扰问题，关闭周围干扰源。
+
+问题：ps2 init初始化没弄对
+
+解决方法：在ps2.h中定义全局变量
+
+问题：ps2接线问题
+
+解决：查阅相关资料弄明白了CMD和DAT功能相同
+
+
+
+## 电机马达
+
+![image-20251026161403598](robot.assets/image-20251026161403598.png)
+
+问题：初步接线后，轮子转向，左前轮和右后轮的转向不对
+
+解决：逐步单个排查接线，获得
+
+红橙线对应左后轮（A2 A3）红A3  Motor2
+蓝紫线 右前（A0 A1）蓝A1       M1
+蓝绿 右后（B6 B7）绿B7  M3
+黑白 左前（B8 B9）黑B8    M4
+紫色GND
+
+## 关于制作与实操过程中遇到的困难与解决方案
+
+### 电控组
+
+1、关于代码的学习与编写，从零基础到实操编写这是花费大量精力与时间的过程。对于这个问题唯有凭学习与实践才能克服。
+
+2、第二个是对于小车各项参数的编译，这个方面包括麦克纳姆轮、舵机的解算。当然凭借网络资源查找与学习是一样可以解决的。
+
+3、最困难的一个问题就是材料物件不稳定性大于人为因素，只有通过不断调整参数才能够适应小车运动情况，对于这个问题解决，要特别感谢热心的学长学姐给予帮助与指导（真的真的很大帮助）。
+
+### 机械和硬件
+
+1、早期学习solidworks，同样也是花费大量时间与精力，到后来上手才越来越熟练，能够达到比赛需要预期。
+
+2、在完成3D打印之后最大的问题就是适应比赛尺寸与修改现有物件尺寸达到稳固的连接的效果。对板子的切割材料切割甚至用到了大型切割机（本人亲自动手），需要学会各种工具的使用。
+
+3、整合所有物件是最后一个问题，需要对物件强行塞入，就会面对滑丝、扩孔等一系列问题。还要保证整体的稳固与接合（毁灭吧）。
+
